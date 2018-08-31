@@ -5,7 +5,8 @@
 
 -- 
 ## Appendix: List of Tables in the Sakila DB
--- A schema is also available as `sakila_schema.svg`. Open it with a browser to view.
+-- A schema is also available as `sakila_schema.svg`.
+-- Open it with a browser to view.
 
 ```sql
 	'actor'

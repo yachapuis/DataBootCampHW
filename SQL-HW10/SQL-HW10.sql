@@ -79,31 +79,23 @@ SELECT country_id, country
 FROM country 
 WHERE country IN ('Afghanistan', 'Bangladesh', 'China');
 
--- 3a. Add a `middle_name` column to the table `actor`. Position it between `first_name` and `last_name`.
---     Hint: you will need to specify the data type.
-
--- 3a. REAL You want to keep a description of each actor. 
--- You don't think you will be performing queries on a description, 
--- so create a column in the table `actor` named `description` and use the data type `BLOB` 
--- (Make sure to research the type `BLOB`, as the difference between it and `VARCHAR` are significant).
-
--- 3b. REAL Very quickly you realize that entering descriptions for each actor is too much effort. Delete the `description` column.
+-- 3a. You want to keep a description of each actor. 
+--     You don't think you will be performing queries on a description, 
+--     so create a column in the table `actor` named `description` and use the data type `BLOB` 
+--     (Make sure to research the type `BLOB`, as the difference between it and `VARCHAR` are significant).
 
 ALTER TABLE actor
-ADD COLUMN middle_name VARCHAR(25) AFTER first_name;
+ADD COLUMN description VARCHAR(20) AFTER last_name;
+ALTER TABLE actor
+MODIFY COLUMN description BLOB;
 
--- 3b. You realize that some of these actors have tremendously long middle names. 
---     Change the data type of the `middle_name` column to `blobs`.
+-- 3b. Very quickly you realize that entering descriptions for each actor is too much effort. 
+--     Delete the `description` column.
 
 ALTER TABLE actor
-MODIFY COLUMN middle_name BLOB;
+DROP COLUMN description;
 
--- 3c. Now delete the `middle_name` column.
-
-ALTER TABLE actor
-DROP COLUMN middle_name;
-
--- * 4a. List the last names of actors, as well as how many actors have that last name.
+-- 4a. List the last names of actors, as well as how many actors have that last name.
 
 SELECT last_name, COUNT(*) AS 'Number of Actors' 
 FROM actor GROUP BY last_name;

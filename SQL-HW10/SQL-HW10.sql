@@ -1,17 +1,47 @@
-##SQL-HW10.sql
+# SQL-HW10.sql
 
--- INSTRUCTIONS
+## INSTRUCTIONS
 -- See README.md
 
--- SQL SCRIPT
+-- 
+## Appendix: List of Tables in the Sakila DB
+-- A schema is also available as `sakila_schema.svg`. Open it with a browser to view.
+
+```sql
+	'actor'
+	'actor_info'
+	'address'
+	'category'
+	'city'
+	'country'
+	'customer'
+	'customer_list'
+	'film'
+	'film_actor'
+	'film_category'
+	'film_list'
+	'film_text'
+	'inventory'
+	'language'
+	'nicer_but_slower_film_list'
+	'payment'
+	'rental'
+	'sales_by_film_category'
+	'sales_by_store'
+	'staff'
+	'staff_list'
+	'store'
+```
+
+##SQL SCRIPT
 
 -- Select database 'sakila' in my SQL schema.
--- All operations will be performed in database 'sakila'. 
+-- All operations will be performed in database 'sakila'.
+
 USE sakila;
 
--- INSTRUCTIONS
-
 -- 1a. Display the first and last names of all actors from the table `actor'. 
+
 SELECT first_name, last_name
 FROM actor;
 
@@ -21,43 +51,48 @@ FROM actor;
 SELECT UPPER(CONCAT(first_name, ' ', last_name)) AS `Actor Name`
 FROM actor;
 
--- 2a.  You need to find the ID number, first name, and last name of 
---      an actor, of whom you know only the first name, "Joe." What is 
---      one query would you use to obtain this information?
+-- 2a. You need to find the ID number, first name, and last name of an actor, of whom you know only the first name, "Joe."
+--     What is one query would you use to obtain this information?
 
 SELECT actor_id, first_name, last_name
 FROM actor
 WHERE first_name = "Joe";
 
--- 2b.  Find all actors whose last name contain the letters `GEN`
+-- 2b. Find all actors whose last name contain the letters `GEN`.
 
 SELECT actor_id, first_name, last_name
 FROM actor
 WHERE last_name like '%GEN%';
 
 -- 2c. Find all actors whose last names contain the letters `LI`. 
---     This time, order the rows by last name and first name, in that order:
+--     This time, order the rows by last name and first name, in that order.
 
 SELECT actor_id, last_name, first_name
 FROM actor
 WHERE last_name like '%LI%';
 
--- 2d. Using `IN`, display the `country_id` and `country` columns of 
---     the following countries: Afghanistan, Bangladesh, and China
+-- 2d. Using `IN`, display the `country_id` and `country` columns of the following countries: 
+--     Afghanistan, Bangladesh, and China.
 
 SELECT country_id, country
 FROM country 
-WHERE country IN 
-('Afghanistan', 'Bangladesh', 'China');
+WHERE country IN ('Afghanistan', 'Bangladesh', 'China');
 
--- 3a. Add a `middle_name` column to the table `actor`. Position it between
---     `first_name` and `last_name`. Hint: you will need to specify the data type.
+-- 3a. Add a `middle_name` column to the table `actor`. Position it between `first_name` and `last_name`.
+--     Hint: you will need to specify the data type.
+
+-- 3a. REAL You want to keep a description of each actor. 
+-- You don't think you will be performing queries on a description, 
+-- so create a column in the table `actor` named `description` and use the data type `BLOB` 
+-- (Make sure to research the type `BLOB`, as the difference between it and `VARCHAR` are significant).
+
+-- 3b. REAL Very quickly you realize that entering descriptions for each actor is too much effort. Delete the `description` column.
 
 ALTER TABLE actor
 ADD COLUMN middle_name VARCHAR(25) AFTER first_name;
 
 -- 3b. You realize that some of these actors have tremendously long middle names. 
--- Change the data type of the `middle_name` column to `blobs`.
+--     Change the data type of the `middle_name` column to `blobs`.
 
 ALTER TABLE actor
 MODIFY COLUMN middle_name BLOB;
@@ -78,9 +113,8 @@ FROM actor GROUP BY last_name;
 SELECT last_name, COUNT(*) AS 'Number of Actors' 
 FROM actor GROUP BY last_name HAVING count(*) >=2;
 
--- 4c. Oh, no! The actor `HARPO WILLIAMS` was accidentally entered in the `actor` 
---     table as `GROUCHO WILLIAMS`, the name of Harpo's second cousin's husband's
---     yoga teacher. Write a query to fix the record.
+-- 4c. The actor `HARPO WILLIAMS` was accidentally entered in the `actor` 
+--     table as `GROUCHO WILLIAMS`. Write a query to fix the record.
 
 UPDATE actor 
 SET first_name = 'HARPO'
@@ -89,7 +123,10 @@ WHERE First_name = "Groucho" AND last_name = "Williams";
 -- 4d. Perhaps we were too hasty in changing `GROUCHO` to `HARPO`. 
 --     It turns out that `GROUCHO` was the correct name after all!
 --     In a single query, if the first name of the actor is currently
---     `HARPO`, change it to `GROUCHO`. Otherwise, change the first
+--     `HARPO`, change it to `GROUCHO`. 
+--
+--     In OLD (Instructions continue)
+--     Otherwise, change the first
 --     name to `MUCHO GROUCHO`, as that is exactly what the actor will
 --     be with the grievous error. BE CAREFUL NOT TO CHANGE THE FIRST
 --     NAME OF EVERY ACTOR TO `MUCHO GROUCHO`, HOWEVER! (Hint: update
@@ -99,13 +136,15 @@ UPDATE actor
 SET first_name = 'GROUCHO'
 WHERE actor_id = 172;
 
--- 5a. You cannot locate the schema of the `address` table. Which query
---     would you use to re-create it?
+-- 5a. You cannot locate the schema of the `address` table.
+--     Which query would you use to re-create it?
+--     Hint: <https://dev.mysql.com/doc/refman/5.7/en/show-create-table.html>
 
 DESCRIBE sakila.address;
 
--- 6a. Use `JOIN` to display the first and last names, as well as the
---     address, of each staff member. Use the tables `staff` and `address`:
+-- 6a. Use `JOIN` to display the first and last names, as well as the address, 
+--     of each staff member. 
+--     Use the tables `staff` and `address`.
 
 SELECT first_name, last_name, address
 FROM staff s 
@@ -120,7 +159,8 @@ FROM staff INNER JOIN payment ON
 staff.staff_id = payment.staff_id AND payment_date LIKE '2005-08%'; 
 
 -- 6c. List each film and the number of actors who are listed for that film. 
---     Use tables `film_actor` and `film`. Use inner join.
+--     Use tables `film_actor` and `film`. 
+--     Use inner join.
 
 SELECT f.title AS 'Film Title', COUNT(fa.actor_id) AS `Number of Actors`
 FROM film_actor fa
@@ -138,7 +178,8 @@ FROM film
 WHERE title = "Hunchback Impossible";
 
 -- 6e. Using the tables `payment` and `customer` and the `JOIN` command, list the total
---     paid by each customer. List the customers alphabetically by last name:
+--     paid by each customer. List the customers alphabetically by last name.
+--   	 ![Total amount paid](Images/total_payment.png)
 
 SELECT c.first_name, c.last_name, sum(p.amount) AS `Total Paid`
 FROM customer c
@@ -176,8 +217,8 @@ FROM film
 WHERE title = 'Alone Trip'
 ));
 
--- 7c. You want to run an email marketing campaign in Canada, for which you 
---     will need the names and email addresses of all Canadian customers. 
+-- 7c. You want to run an email marketing campaign in Canada, 
+--     for which you will need the names and email addresses of all Canadian customers. 
 --     Use joins to retrieve this information.
 
 SELECT cus.first_name, cus.last_name, cus.email 
@@ -190,9 +231,9 @@ JOIN country
 ON (country.country_id = cty.country_id)
 WHERE country.country= 'Canada';
 
--- * 7d. Sales have been lagging among young families, and you wish
---       to target all family movies for a promotion. Identify all movies 
---       categorized as famiy films.
+-- 7d. Sales have been lagging among young families, 
+--     and you wish to target all family movies for a promotion.
+--     Identify all movies categorized as famiy films.
 
 SELECT title, description FROM film 
 WHERE film_id IN
@@ -238,9 +279,8 @@ ON (cty.city_id = a.city_id)
 JOIN country
 ON (country.country_id = cty.country_id);
 
-
 --  7h. List the top five genres in gross revenue in descending order. 
---      (**Hint**: you may need to use the following tables: category,
+--      (Hint: you may need to use the following tables: category,
 --       film_category, inventory, payment, and rental.)
 
 SELECT c.name AS 'Genre', SUM(p.amount) AS 'Gross' 
@@ -281,3 +321,5 @@ SELECT * FROM genre_revenue;
 --      Write a query to delete it.
 
 DROP VIEW genre_revenue;
+
+## RESULTS: All.csv files can be found in folder `Results`.

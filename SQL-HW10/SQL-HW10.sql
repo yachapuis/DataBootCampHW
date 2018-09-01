@@ -174,7 +174,7 @@ WHERE title = "Hunchback Impossible";
 --     paid by each customer. List the customers alphabetically by last name.
 --   	 ![Total amount paid](Images/total_payment.png)
 
-SELECT c.first_name, c.last_name, sum(p.amount) AS `Total Paid`
+SELECT c.first_name, c.last_name, sum(p.amount) AS `Total Amount Paid`
 FROM customer c
 JOIN payment p 
 ON c.customer_id= p.customer_id

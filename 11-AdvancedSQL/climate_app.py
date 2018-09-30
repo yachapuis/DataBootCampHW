@@ -1,4 +1,4 @@
-# Step 1 - Climate app
+# Step 2 - Climate app
 
 # 1. import libraries
 from flask import Flask, jsonify
